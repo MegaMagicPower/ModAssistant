@@ -211,54 +211,6 @@ namespace ModAssistant
 
         public static string GetSteamVersion()
         {
-            string SteamInstall = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)?.OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam")?.GetValue("InstallPath").ToString();
-            if (String.IsNullOrEmpty(SteamInstall))
-            {
-                SteamInstall = Registry.LocalMachine.OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam")?.GetValue("InstallPath").ToString();
-            }
-            if (String.IsNullOrEmpty(SteamInstall)) return null;
-
-            string vdf = Path.Combine(SteamInstall, @"steamapps\libraryfolders.vdf");
-            if (!File.Exists(@vdf)) return null;
-
-            Regex regex = new Regex("\\s\"\\d\"\\s+\"(.+)\"");
-            List<string> SteamPaths = new List<string>();
-            SteamPaths.Add(Path.Combine(SteamInstall, @"steamapps"));
-
-            using (StreamReader reader = new StreamReader(@vdf))
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    Match match = regex.Match(line);
-                    if (match.Success)
-                    {
-                        SteamPaths.Add(Path.Combine(match.Groups[1].Value.Replace(@"\\", @"\"), @"steamapps"));
-                    }
-                }
-            }
-
-            regex = new Regex("\\s\"buildid\"\\s+\"(.+)\"");
-            foreach (string path in SteamPaths)
-            {
-                if (File.Exists(Path.Combine(@path, @"appmanifest_" + Constants.BeatSaberAPPID + ".acf")))
-                {
-                    using (StreamReader reader = new StreamReader(Path.Combine(@path, @"appmanifest_" + Constants.BeatSaberAPPID + ".acf")))
-                    {
-                        string line;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            Match match = regex.Match(line);
-                            if (match.Success)
-                            {
-                                string _version;
-                                GameVersions.SteamVersions.TryGetValue(match.Groups[1].Value, out _version);
-                                return _version ?? "";
-                            }
-                        }
-                    }
-                }
-            }
             return null;
         }
 
