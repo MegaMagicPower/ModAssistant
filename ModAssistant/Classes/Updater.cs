@@ -40,7 +40,7 @@ namespace ModAssistant
             CurrentVersion = new Version(App.Version);
 
 
-            return (LatestVersion > CurrentVersion);
+            return (false);
         }
 
         public static void Run()
